@@ -17,17 +17,8 @@ export default {
   computed: mapState({
     drop: state => state.drop
   }),
-  mounted: function() {
-    this.$store.dispatch('retrieveDrop').then(() => {
-      this.$store.dispatch('setFlash', {
-        message: 
-        `
-        <h2>Success!</h2>
-        <p>Drop retireved, then deleted</p>
-        `,
-        context: 'success'
-      })
-    })
+  mounted() {
+    this.$store.dispatch('retrieveDrop')
   }
 }
 </script>

@@ -16,6 +16,7 @@ export default new Vuex.Store({
       message: '',
       timeout: 0
     },
+    creating: false,
     drop: {
       message: '',
       password: '',
@@ -35,20 +36,49 @@ export default new Vuex.Store({
         message: '',
       }}, state.flash.timeout * 1000)
     },
+    CREATING_TOGGLE(state) {
+      state.creating = !state.creating
+    },
     SET_DROP(state, drop) {
       state.drop = drop
     }
   },
   actions: {
+    setFlash(context, flash) {
+      context.commit('SET_FLASH', flash)
+    },
+    createDrop(context, drop) {
+      context.commit('CREATING_TOGGLE')
+
+      axios.post(api, drop).then(res => { 
+        context.commit('CREATING_TOGGLE')
+        
+        context.commit('SET_FLASH', {
+          message:
+            `
+            <h2>Success!</h2>
+            ${res.data._id}, ${res.data.password}
+            `,
+            context: 'success'
+          })
+        })
+    },
     retrieveDrop(context) {
       axios.get(api + router.currentRoute.fullPath).then(response => {
         const drop = response.data
         context.commit('SET_DROP', drop)
-      })
-    },
-    setFlash(context, flash) {
-      context.commit('SET_FLASH', flash)
-    }
+
+        context.commit('SET_FLASH', {
+            message: 
+            `
+            <h2>Success!</h2>
+            <p>Drop retireved, then deleted</p>
+            `,
+            context: 'success'
+          })
+        })
+
+      }
   },
   getters: {
 
